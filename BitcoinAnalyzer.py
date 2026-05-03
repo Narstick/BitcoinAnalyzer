@@ -340,6 +340,35 @@ def candle_strength(df):
     df["strength"] = df["candle_size"] / (df["high"] - df["low"])
     return df
 
+def detect_engulfing(df):
+    prev = df.iloc[-2]
+    last = df.iloc[-1]
+
+    # Bullish engulfing
+    bullish = (
+        prev["close"] < prev["open"] and
+        last["close"] > last["open"] and
+        last["close"] > prev["open"] and
+        last["open"] < prev["close"]
+    )
+
+    # Bearish engulfing
+    bearish = (
+        prev["close"] > prev["open"] and
+        last["close"] < last["open"] and
+        last["open"] > prev["close"] and
+        last["close"] < prev["open"]
+    )
+
+    if bullish:
+        print("🟢 Bullish Engulfing (posible subida)")
+
+    elif bearish:
+        print("🔴 Bearish Engulfing (posible bajada)")
+
+    else:
+        print("📊 No engulfing")
+
 def analyze_last_candle(df):
     last = df.iloc[-1]
 
@@ -365,6 +394,8 @@ def analyze_last_candle(df):
 
     else:
         print("📊 VELA NEUTRAL")
+
+    detect_engulfing(df)
 
 # Ejecutar
 df = get_data()
